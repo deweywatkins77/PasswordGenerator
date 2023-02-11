@@ -26,7 +26,7 @@ function generatePassword(){
   }
 
   if (passTypePrompt("Would you like Lowercase Letters in your password?\n\n[Y]es or [N]o") === 'y'){
-    passTypes.unshift('lowerCase')
+    passTypes.unshift('lowercase')
   }
 
   if (passTypePrompt("Would you like numbers in your password?\n\n[Y]es or [N]o") === 'y'){
@@ -36,33 +36,50 @@ function generatePassword(){
   if (passTypePrompt("Would you like special characters in your password?\n\n[Y]es or [N]o") === 'y'){
     passTypes.unshift('special')
   }
-
   //check to make sure that at least one character type has been selected.
   if (passTypes.length < 1){
     window.alert("No character types were selected. Please try again by clicking the generate button.")
+    return ""
   }
 
-  //Loop number of times equal to the length chosen, Randomly select through the types chosen, randomly select character, generate password
-  for (i=0; i < passLength; i++){
-    var newChar = ""
-    var checkType = genRandom(passTypes)
+  // Set tracker variables to false, with these we can ensure that random anomalies will
+  // not prevent selected types from being used
+  var trackUpper = false
+  var trackLower = false
+  var trackNumber = false
+  var trackSpecial = false
 
-    if ( checkType == 'uppercase'){
-      genPass += genRandom(upperCasePool)
-    }else if (checkType == 'lowercase'){
-      genPass += genRandom(lowerCasePool)
-    }else if (checkType == 'special'){
-      genPass += genRandom(specialPool)
-    }else{
-      genPass += String.valueOf(Integer(Math.floor(Math.random() * 9 )))
-    }
-  // ensure password has all selected types present
-  if (i = passLength - 1){
-    for(j = 0; j < passTypes.length; j++){
-      if genPass()
+  // Loop number of times equal to the length chosen
+  // Randomly select through the types chosen
+  // Randomly select character
+  // Then generate password
+  do{
+    for (i=0; i < passLength; i++){
+      var newChar = ""
+      var checkType = genRandom(passTypes)
+
+      if ( checkType == 'uppercase'){
+        genPass += genRandom(upperCasePool)
+        trackUpper = true
+      }else if (checkType == 'lowercase'){
+        genPass += genRandom(lowerCasePool)
+        trackLower = true
+      }else if (checkType == 'special'){
+        genPass += genRandom(specialPool)
+        trackSpecial = true
+      }else{
+        genPass += Math.floor(Math.random() * 9 )
+        trackNumber = true
+      }
     }
   }
-  }
+  // Ensuring selected types are used.
+  while((trackUpper === false && passTypes.includes('uppercase')) ||
+        (trackLower === false && passTypes.includes('lowercase')) ||
+        (trackNumber === false && passTypes.includes('numbers')) ||
+        (trackSpecial === false && passTypes.includes('special'))
+  )
+  return genPass
 }
 
 //random generator function
@@ -78,18 +95,18 @@ function passTypePrompt(msg){
   var answer = ""
   //variable tracker for alerting user if input was incorrect
   var incorrect = 0
-  
+
   do{
     if (incorrect === 0){
       answer = window.prompt(msg)
     }else{
       answer = window.prompt("Incorrect Response: Please Try Again.\n\n\n" + msg)
     }
-    // while loop is running keep incorrect at 1 so user will have valid input
+    // while loop is running keep incorrect at 1 so user will be force to use valid input
     incorrect  = 1
   }
-  while (ynResponse.indexof(answer) === -1)
-  
+  while (!ynResponse.includes(answer))
+
   answer = answer.toLowerCase()
   if (answer === 'y' || answer === 'yes'){
     return "y"
