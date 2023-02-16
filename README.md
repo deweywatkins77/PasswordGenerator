@@ -12,6 +12,7 @@ N/A
 https://deweywatkins77.github.io/PasswordGenerator/
 
 will take you to the webpage shown below.
+
 ![Dewey Watkins Password Generator](./Assets/images/readme-screenshot.png)
 
 To use the page click the generate password button. You will receives prompts for password criteria. It is required to select at least one character type.
